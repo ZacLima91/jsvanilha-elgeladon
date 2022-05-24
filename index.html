@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/style.css">
+    <title>Seu Zé da Budega</title>
+</head>
+
+<body>
+    <section class="Home">
+
+        <header class="Home__header Header">
+            <div class="row">
+                <div class="Header__logo Logo">
+                    <img src="./assets/logo.png" width="70px" alt="Logo Seu Zé da Budega" class="Logo__icone" />
+                    <span class="Logo__titulo"> Seu Zé da Budega </span>
+                </div>
+
+                <div class="Header__opcoes Opcoes">
+                    <div class="Opcoes__sacola Sacola">
+                        <img src="./assets/icons/sacola.svg" width="40px" class="Sacola__icone"
+                            alt="Sacola de compras" />
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="button-modal-create">
+            <button type="button" class="default-button" onclick="abrirModal()">Cadastrar Fruta</button>
+        </section>
+
+        <section class="modal-overlay" id="overlay">
+
+            <div class="modal">
+
+                <div class="modal-header">
+                    <h2 id="title-header-modal">Cadastrar uma fruta</h2>
+                    <a onclick="fecharModal()" class="close-modal">x</a>
+                </div>
+
+                <div class="modal-body">
+                    <div>
+                        <input type="hidden" id="id">
+                        <input type="text" name="sabor" id="sabor" placeholder="Sabor da Fruta">
+                        <input type="number" name="preco" id="preco" placeholder="Preço da Fruta">
+                        <textarea type="text" name="descricao" id="descricao" placeholder="Descrição da Fruta"
+                            rows="5"></textarea>
+                        <input type="text" name="foto" id="foto" placeholder="Link da Foto da Fruta">
+                        <button id="button-form-modal" onclick="createFruta()">Cadastrar</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="modal-overlay" id="overlay-delete">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 id="title-header-modal">Confirmação de deleção</h2>
+                    <a onclick="fecharModalDelete()" class="close-modal">x</a>
+                </div>
+                <div class="modal-body-delete">
+                    <p>Deseja realmente apagar essa fruta?</p>
+                    <div class="btns_delete">
+                        <button class="btn_delete_no btn_delete" onclick="fecharModalDelete()">Não</button>
+                        <button class="btn_delete_yes btn_delete">Sim</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <h2>Pesquisar Fruta</h2>
+        <div class="fruta-escolhida-espaco">
+            <div id="fruta-escolhida-input-espaco">
+                <input type="number" id="idFruta" placeholder="Digite o ID da fruta e clique em 'Escolher'" />
+                <button class="default-button" onclick="findByIdFruta()">ESCOLHER</button>
+            </div>
+            <div id="frutaEscolhida">
+
+            </div>
+        </div>
+
+        <h2>Frutas Disponíveis:</h2>
+        <div class="Home__container">
+            <div class="FrutaLista" id="frutaList">
+            </div>
+        </div>
+    </section>
+
+    <script src="./assets/script.js"></script>
+</body>
+
+</html>
