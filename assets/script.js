@@ -1,7 +1,8 @@
 const baseURL = "http://localhost:3000/frutas";
+const msgAlert = document.querySelector(".msg-alert");
 
 async function findAllFrutas() {
-  const response = await fetch(`${baseURL}/todas-frutas`);
+  const response = await fetch(`${baseURL}/all-frutas`);
 
   const frutas = await response.json();
 
@@ -9,15 +10,15 @@ async function findAllFrutas() {
     document.querySelector("#frutaList").insertAdjacentHTML(
       "beforeend",
       `
-    <div class="FrutaListaItem" id="FrutaListaItem_${fruta.id}">
+    <div class="FrutaListaItem" id="FrutaListaItem_${fruta._id}">
         <div>
             <div class="FrutaListaItem__nome">${fruta.nome}</div>
             <div class="FrutaListaItem__preco">R$ ${fruta.preco}</div>
             <div class="FrutaListaItem__descricao">${fruta.descricao}</div>
 
             <div class="FrutaListaItem__acoes Acoes">
-              <button class="Acoes__editar btn" onclick="abrirModal(${fruta.id})">Editar</button> 
-              <button class="Acoes__apagar btn" onclick="abrirModalDelete(${fruta.id})">Apagar</button> 
+              <button class="Acoes__editar btn" onclick="abrirModal('${fruta._id}')">Editar</button> 
+              <button class="Acoes__apagar btn" onclick="abrirModalDelete('${fruta._id}')">Apagar</button> 
             </div>
         </div>
         
@@ -32,29 +33,43 @@ async function findAllFrutas() {
 
 async function findByIdFrutas() {
   const id = document.querySelector("#idFruta").value;
+  if (id == "") {
+    localStorage.setItem("message", "Digite um Id para pesquisar!");
+    localStorage.setItem("type", "danger");
 
-  const response = await fetch(`${baseURL}/fruta/${id}`);
+    msgAlert.innerText = localStorage.getItem("message");
+    msgAlert.classList.add(localStorage.getItem("type"));
+    closeMessageAlert();
+    return;
+  }
+
+  const response = await fetch(`${baseURL}/one-fruta/${id}`);
   const fruta = await response.json();
+
+  if (fruta.message != undefined) {
+    localStorage.setItem("message", fruta.message);
+    localStorage.setItem("type", "danger");
+    showMessageAlert();
+    return;
+  }
 
   const frutaEscolhidaDiv = document.querySelector("#frutaEscolhida");
 
   frutaEscolhidaDiv.innerHTML = `
-  <div class="FrutaCardItem" id="FrutaListaItem_${fruta.id}">
+  <div class="FrutaCardItem" id="FrutaListaItem_${fruta._id}">
   <div>
       <div class="FrutaCardItem__nome">${fruta.nome}</div>
       <div class="FrutaCardItem__preco">R$ ${fruta.preco}</div>
       <div class="FrutaCardItem__descricao">${fruta.descricao}</div>
       
       <div class="FrutaListaItem__acoes Acoes">
-          <button class="Acoes__editar btn" onclick="abrirModal(${fruta.id})">Editar</button> 
-          <button class="Acoes__apagar btn" onclick="abrirModalDelete(${fruta.id})">Apagar</button> 
+          <button class="Acoes__editar btn" onclick="abrirModal('${fruta._id}')">Editar</button> 
+          <button class="Acoes__apagar btn" onclick="abrirModalDelete('${fruta._id}')">Apagar</button> 
       </div>
   </div>
   <img class="FrutaCardItem__foto" src="${fruta.foto}" alt="Fruta de ${fruta.nome}" />
 </div>`;
 }
-
-findAllFrutas();
 
 async function abrirModal(id = null) {
   if (id != null) {
@@ -62,14 +77,14 @@ async function abrirModal(id = null) {
       "Atualizar uma Fruta";
     document.querySelector("#button-form-modal").innerText = "Atualizar";
 
-    const response = await fetch(`${baseURL}/fruta/${id}`);
+    const response = await fetch(`${baseURL}/one-fruta/${id}`);
     const fruta = await response.json();
 
     document.querySelector("#nome").value = fruta.nome;
     document.querySelector("#preco").value = fruta.preco;
     document.querySelector("#descricao").value = fruta.descricao;
     document.querySelector("#foto").value = fruta.foto;
-    document.querySelector("#id").value = fruta.id;
+    document.querySelector("#id").value = fruta._id;
   } else {
     document.querySelector("#title-header-modal").innerText =
       "Cadastrar uma Fruta";
@@ -103,9 +118,10 @@ async function createFruta() {
     foto,
   };
 
-  const modoEdicaoAtivado = id > 0;
+  const modoEdicaoAtivado = id != "";
 
-  const endpoint = baseURL + (modoEdicaoAtivado ? `/update/${id}` : `/create`);
+  const endpoint =
+    baseURL + (modoEdicaoAtivado ? `/update-fruta/${id}` : `/create-fruta`);
 
   const response = await fetch(endpoint, {
     method: modoEdicaoAtivado ? "put" : "post",
@@ -118,38 +134,32 @@ async function createFruta() {
 
   const novaFruta = await response.json();
 
-  const html = `
-  <div class="FrutaListaItem" id="FrutaListaItem_${fruta.id}">
-    <div>
-        <div class="FrutaListaItem__nome">${novaFruta.nome}</div>
-        <div class="FrutaListaItem__preco">R$ ${novaFruta.preco}</div>
-        <div class="FrutaListaItem__descricao">${novaFruta.descricao}</div>
-
-        <div class="FrutaListaItem__acoes Acoes">
-          <button class="Acoes__editar btn" onclick="abrirModal(${fruta.id})">Editar</button> 
-          <button class="Acoes__apagar btn" onclick="abrirModalDelete(${fruta.id})">Apagar</button> 
-        </div>
-    </div>
-    <img class="FrutaListaItem__foto" src="${novaFruta.foto}" alt="Fruta de ${novaFruta.nome}" />
-  </div>`;
-
-  if (modoEdicaoAtivado) {
-    document.querySelector(`#FrutaListaItem_${id}`).outerHTML = html;
-  } else {
-    document.querySelector("#frutaList").insertAdjacentHTML("beforeend", html);
+  
+  if (novaFruta.message != undefined) {
+    localStorage.setItem("message", novaFruta.message);
+    localStorage.setItem("type", "danger");
+    showMessageAlert();
+    return
   }
-
+  if (modoEdicaoAtivado) {
+    localStorage.setItem("message", "Fruta atualizada com sucesso!");
+    localStorage.setItem("type", "success");
+  } else {
+    localStorage.setItem("message", "Fruta criada com sucesso!");
+    localStorage.setItem("type", "success");
+  }
+  document.location.reload(true);
   fecharModal();
 }
 
 function abrirModalDelete(id) {
   document.querySelector("#overlay-delete").style.display = "flex";
 
-  const btnSim = document.querySelector(".btn_delete_yes")
+  const btnSim = document.querySelector(".btn_delete_yes");
 
-  btnSim.addEventListener("click", function() {
+  btnSim.addEventListener("click", function () {
     deleteFruta(id);
-  })
+  });
 }
 
 function fecharModalDelete() {
@@ -157,7 +167,7 @@ function fecharModalDelete() {
 }
 
 async function deleteFruta(id) {
-  const response = await fetch(`${baseURL}/delete/${id}`, {
+  const response = await fetch(`${baseURL}/delete-fruta/${id}`, {
     method: "delete",
     headers: {
       "Content-Type": "application/json",
@@ -166,10 +176,26 @@ async function deleteFruta(id) {
   });
 
   const result = await response.json();
-  alert(result.message);
-
-  document.getElementById("frutaList").innerHTML = ""
+  localStorage.setItem("message",result.message);
+  localStorage.setItem("type", "success");
+  document.location.reload(true);
 
   fecharModalDelete();
-  findAllFrutas();
 }
+
+function closeMessageAlert() {
+  setTimeout(() => {
+    msgAlert.innerText = "";
+    msgAlert.classList.remove(localStorage.getItem("type"));
+    localStorage.clear();
+  }, 3000);
+}
+
+function showMessageAlert() {
+  msgAlert.innerText = localStorage.getItem("message");
+  msgAlert.classList.add(localStorage.getItem("type"));
+  closeMessageAlert();
+}
+
+showMessageAlert();
+findAllFrutas();

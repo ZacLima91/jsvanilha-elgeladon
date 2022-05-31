@@ -28,7 +28,8 @@
             </div>
         </header>
 
-        <section class="button-modal-create">
+        <section class="options">
+           <span class="msg-alert"></span>
             <button type="button" class="default-button" onclick="abrirModal()">Cadastrar Fruta</button>
         </section>
 
@@ -44,7 +45,7 @@
                 <div class="modal-body">
                     <div>
                         <input type="hidden" id="id">
-                        <input type="text" name="sabor" id="sabor" placeholder="Sabor da Fruta">
+                        <input type="text" name="nome" id="nome" placeholder="Sabor da Fruta">
                         <input type="number" name="preco" id="preco" placeholder="Preço da Fruta">
                         <textarea type="text" name="descricao" id="descricao" placeholder="Descrição da Fruta"
                             rows="5"></textarea>
@@ -74,8 +75,8 @@
         <h2>Pesquisar Fruta</h2>
         <div class="fruta-escolhida-espaco">
             <div id="fruta-escolhida-input-espaco">
-                <input type="number" id="idFruta" placeholder="Digite o ID da fruta e clique em 'Escolher'" />
-                <button class="default-button" onclick="findByIdFruta()">ESCOLHER</button>
+                <input type="text" id="idFruta" placeholder="Digite o ID da fruta e clique em 'Escolher'" />
+                <button class="default-button" onclick="findByIdFrutas()">ESCOLHER</button>
             </div>
             <div id="frutaEscolhida">
 
